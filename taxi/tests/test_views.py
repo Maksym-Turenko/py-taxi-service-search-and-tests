@@ -16,7 +16,7 @@ class PublicViewsTest(TestCase):
         self.assertNotEqual(response.status_code, 200)
         self.assertRedirects(
             response,
-            f"{reverse("login")}?next=/"
+            f'{reverse("login")}?next=/'
         )
 
 
