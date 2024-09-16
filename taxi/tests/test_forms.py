@@ -35,7 +35,10 @@ class DriverCreationFormTest(TestCase):
 
 class DriverLicenseUpdateFormTest(TestCase):
     def test_driver_license_update_form_custom_validation(self):
-        """Test custom validation for license number in DriverLicenseUpdateForm."""
+        """
+        Test custom validation for
+        license number in DriverLicenseUpdateForm.
+        """
         form = DriverLicenseUpdateForm(data={
             "license_number": "12345678"
         })

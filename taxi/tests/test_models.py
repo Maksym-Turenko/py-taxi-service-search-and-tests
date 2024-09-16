@@ -46,7 +46,10 @@ class DriverModelTest(TestCase):
 
     def test_driver_get_absolute_url(self):
         """Test the get_absolute_url method of the Driver model."""
-        self.assertEqual(self.driver.get_absolute_url(), f"/drivers/{self.driver.pk}/")
+        self.assertEqual(
+            self.driver.get_absolute_url(),
+            f"/drivers/{self.driver.pk}/"
+        )
 
     def test_license_number_unique(self):
         """Test that the license number is unique."""
@@ -93,4 +96,3 @@ class CarModelTest(TestCase):
         """Test ManyToMany relationship between Car and Driver."""
         self.assertEqual(self.car.drivers.count(), 1)
         self.assertIn(self.driver, self.car.drivers.all())
-

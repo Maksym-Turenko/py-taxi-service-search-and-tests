@@ -5,20 +5,34 @@ from taxi.models import Manufacturer, Car, Driver
 
 User = get_user_model()
 
+
 class PublicViewsTest(TestCase):
     def test_login_required_redirect(self):
-        """Test that all views require login and redirect unauthorized users."""
+        """
+        Test that all views require
+        login and redirect unauthorized users.
+        """
         response = self.client.get(reverse("taxi:index"))
         self.assertNotEqual(response.status_code, 200)
-        self.assertRedirects(response, f"{reverse('login')}?next=/")
+        self.assertRedirects(
+            response,
+            f"{reverse("login")}?next=/"
+        )
+
 
 class PrivateViewsTest(TestCase):
     def setUp(self):
         """Create a user and log them in."""
-        self.user = User.objects.create_user(username="testuser", password="testpass123")
+        self.user = User.objects.create_user(
+            username="testuser",
+            password="testpass123"
+        )
         self.client.login(username="testuser", password="testpass123")
 
-        self.manufacturer = Manufacturer.objects.create(name="Toyota", country="Japan")
+        self.manufacturer = Manufacturer.objects.create(
+            name="Toyota",
+            country="Japan"
+        )
         self.driver = Driver.objects.create_user(
             username="driver1",
             password="password123",
@@ -26,7 +40,10 @@ class PrivateViewsTest(TestCase):
             last_name="Doe",
             license_number="ABC12345"
         )
-        self.car = Car.objects.create(model="Camry", manufacturer=self.manufacturer)
+        self.car = Car.objects.create(
+            model="Camry",
+            manufacturer=self.manufacturer
+        )
 
     def test_index_view(self):
         """Test index view and context data."""
@@ -43,10 +60,16 @@ class PrivateViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Toyota")
 
-        response = self.client.get(reverse("taxi:manufacturer-list"), {"search": "Toyota"})
+        response = self.client.get(
+            reverse("taxi:manufacturer-list"),
+            {"search": "Toyota"}
+        )
         self.assertContains(response, "Toyota")
 
-        response = self.client.get(reverse("taxi:manufacturer-list"), {"search": "Ford"})
+        response = self.client.get(reverse(
+            "taxi:manufacturer-list"),
+            {"search": "Ford"}
+        )
         self.assertNotContains(response, "Toyota")
 
     def test_car_list_view(self):
@@ -55,10 +78,16 @@ class PrivateViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Camry")
 
-        response = self.client.get(reverse("taxi:car-list"), {"search": "Camry"})
+        response = self.client.get(
+            reverse("taxi:car-list"),
+            {"search": "Camry"}
+        )
         self.assertContains(response, "Camry")
 
-        response = self.client.get(reverse("taxi:car-list"), {"search": "Corolla"})
+        response = self.client.get(
+            reverse("taxi:car-list"),
+            {"search": "Corolla"}
+        )
         self.assertNotContains(response, "Camry")
 
     def test_driver_list_view(self):
@@ -67,10 +96,16 @@ class PrivateViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "driver1")
 
-        response = self.client.get(reverse("taxi:driver-list"), {"search": "driver1"})
+        response = self.client.get(
+            reverse("taxi:driver-list"),
+            {"search": "driver1"}
+        )
         self.assertContains(response, "driver1")
 
-        response = self.client.get(reverse("taxi:driver-list"), {"search": "driver2"})
+        response = self.client.get(
+            reverse("taxi:driver-list"),
+            {"search": "driver2"}
+        )
         self.assertNotContains(response, "driver1")
 
     def test_toggle_assign_to_car(self):
@@ -88,20 +123,31 @@ class PrivateViewsTest(TestCase):
     def test_create_manufacturer_view(self):
         """Test the manufacturer creation view."""
         form_data = {"name": "Honda", "country": "Japan"}
-        response = self.client.post(reverse("taxi:manufacturer-create"), data=form_data)
+        response = self.client.post(
+            reverse("taxi:manufacturer-create"),
+            data=form_data
+        )
         self.assertEqual(response.status_code, 302)
         self.assertTrue(Manufacturer.objects.filter(name="Honda").exists())
 
     def test_update_manufacturer_view(self):
         """Test the manufacturer update view."""
         form_data = {"name": "Toyota", "country": "USA"}
-        response = self.client.post(reverse("taxi:manufacturer-update", args=[self.manufacturer.id]), data=form_data)
+        response = self.client.post(
+            reverse("taxi:manufacturer-update", args=[self.manufacturer.id]),
+            data=form_data
+        )
         self.assertEqual(response.status_code, 302)
         self.manufacturer.refresh_from_db()
         self.assertEqual(self.manufacturer.country, "USA")
 
     def test_delete_manufacturer_view(self):
         """Test the manufacturer delete view."""
-        response = self.client.post(reverse("taxi:manufacturer-delete", args=[self.manufacturer.id]))
+        response = self.client.post(
+            reverse("taxi:manufacturer-delete",
+                    args=[self.manufacturer.id])
+        )
         self.assertEqual(response.status_code, 302)
-        self.assertFalse(Manufacturer.objects.filter(id=self.manufacturer.id).exists())
+        self.assertFalse(Manufacturer.objects.filter(
+            id=self.manufacturer.id
+        ).exists())

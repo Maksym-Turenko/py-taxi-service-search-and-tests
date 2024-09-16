@@ -108,6 +108,7 @@ class DriverListView(LoginRequiredMixin, generic.ListView):
             queryset = queryset.filter(username__icontains=query)
         return queryset
 
+
 class DriverDetailView(LoginRequiredMixin, generic.DetailView):
     model = Driver
     queryset = Driver.objects.all().prefetch_related("cars__manufacturer")
